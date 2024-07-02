@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:netflixclone/api/api.constants.dart';
+import 'package:netflixclone/model/search_model.dart';
 import 'package:netflixclone/presentation/search/widgets/tiltle.dart';
 
-const imageUrl = "https://media.themoviedb.org/t/p/w250_and_h141_face/kjQBrc00fB2RjHZB3PGR4w9ibpz.jpg,";
-
 class SearchResultWidget extends StatelessWidget {
-  const SearchResultWidget({super.key});
+  final AsyncSnapshot snapshot;
+  const SearchResultWidget({super.key, required this.snapshot});
 
   @override
   Widget build(BuildContext context) {
+    final List<SearchModel> searchResults = snapshot.data;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SearchTextTitle(title: 'Movies & Tv'),
-        SizedBox(
+        const SearchTextTitle(title: 'Movies & Tv'),
+        const SizedBox(
           height: 10,
         ),
         Expanded(
@@ -21,25 +23,36 @@ class SearchResultWidget extends StatelessWidget {
           crossAxisCount: 3,
           mainAxisSpacing: 8,
           crossAxisSpacing: 8,
-          childAspectRatio: 1/1.4,
-          children: List.generate(20, (index) {
-            return MainCard();
-          }),
+          childAspectRatio: 1 / 1.4,
+          children: searchResults.isEmpty
+              ? [const Center(child: Text('No data found'))]
+              : List.generate(searchResults.length, (index) {
+                  final searchResult = searchResults[index];
+                  return MainCards(
+                    searchModel: searchResult,
+                  );
+                }),
         ))
       ],
     );
   }
 }
 
-class MainCard extends StatelessWidget {
-  const MainCard({super.key});
+class MainCards extends StatelessWidget {
+  final SearchModel searchModel;
+  const MainCards({
+    super.key,
+    required this.searchModel,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        image: const DecorationImage(image: NetworkImage(imageUrl),
-        fit: BoxFit.cover),
+        image: DecorationImage(
+            image:
+                NetworkImage(ApiConstants.imageurl + searchModel.posterPath!),
+            fit: BoxFit.cover),
         borderRadius: BorderRadius.circular(7),
       ),
     );

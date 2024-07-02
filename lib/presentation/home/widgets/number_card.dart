@@ -4,8 +4,9 @@ import 'package:netflixclone/core/colors/colors.dart';
 import 'package:netflixclone/core/constants.dart';
 
 class NumberCard extends StatelessWidget {
-  const NumberCard({super.key, required this.index});
   final int index;
+  final String imageUrl;
+  const NumberCard({super.key, required this.index, required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -17,10 +18,10 @@ class NumberCard extends StatelessWidget {
           height: 200,
           decoration: BoxDecoration(
             borderRadius: radius10,
-            image: const DecorationImage(
+            image: DecorationImage(
               fit: BoxFit.cover,
               image: NetworkImage(
-                "https://media.themoviedb.org/t/p/w250_and_h141_face/w7aIPADuAQTa7n7ooRKHclpxmYu.jpg",
+                imageUrl,
               ),
             ),
           ),

@@ -6,28 +6,26 @@ import 'package:netflixclone/presentation/main_page/widget/bottom_nav.dart';
 import 'package:netflixclone/presentation/new_and_hot/screen_new_hot.dart';
 import 'package:netflixclone/presentation/search/screen_search.dart';
 
-
-
 class ScreenMainPage extends StatelessWidget {
-   ScreenMainPage({super.key});
+  ScreenMainPage({super.key});
 
   final pages = [
     const ScreenHome(),
     const ScreenNewAndHot(),
     const ScreenFastAndLaugh(),
     const ScreenSearch(),
-     ScreenDownloads(),
+    const ScreenDownloads(),
   ];
- 
+
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       body: SafeArea(
         child: ValueListenableBuilder(
-          valueListenable: indexChangeNotifier, 
-          builder: (context,int index,_){
-            return pages[index];
-          }),
+            valueListenable: indexChangeNotifier,
+            builder: (context, int index, _) {
+              return pages[index];
+            }),
       ),
       bottomNavigationBar: const BottomNavigationWidget(),
     );

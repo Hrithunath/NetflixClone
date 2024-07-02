@@ -1,14 +1,15 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:netflixclone/api/api.constants.dart';
+import 'package:netflixclone/model/search_model.dart';
 import 'package:netflixclone/presentation/search/widgets/tiltle.dart';
 
 const imageUrl =
     "https://media.themoviedb.org/t/p/w250_and_h141_face/kjQBrc00fB2RjHZB3PGR4w9ibpz.jpg,";
 
 class SearchIdleWidget extends StatelessWidget {
-  const SearchIdleWidget({super.key});
+  final AsyncSnapshot snapshot;
+  const SearchIdleWidget({super.key, required this.snapshot});
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +22,11 @@ class SearchIdleWidget extends StatelessWidget {
         ),
         Expanded(
           child: ListView.separated(
-            shrinkWrap: true,
-              itemBuilder: (context, index) => const TopSearchItemTile(),
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                final result = snapshot.data[index];
+                return TopSearchItemTile(searchModel: result,);
+              },
               separatorBuilder: (context, index) => const SizedBox(
                     height: 20,
                   ),
@@ -33,30 +37,37 @@ class SearchIdleWidget extends StatelessWidget {
   }
 }
 
-
 class TopSearchItemTile extends StatelessWidget {
-  const TopSearchItemTile({super.key});
+  final SearchModel searchModel;
+  const TopSearchItemTile({super.key,required this.searchModel});
 
   @override
   Widget build(BuildContext context) {
-    final ScreenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery.of(context).size.width;
     return Row(
       children: [
         Container(
-          width: ScreenWidth* 0.35,
+          width: screenWidth * 0.35,
           height: 65,
-          decoration: const BoxDecoration(
-              image:
-                  DecorationImage(fit: BoxFit.cover, image: NetworkImage(imageUrl))),
+          decoration:  BoxDecoration(
+              image: DecorationImage(
+                  fit: BoxFit.cover, image: NetworkImage(ApiConstants.imageurl+searchModel.posterPath!))),
         ),
-        const Expanded(child: Text('movies',style: TextStyle(color: Colors.white),)),
+        Expanded(
+            child: Text(
+          searchModel.movieName ?? 'no name' ,
+          style: const TextStyle(color: Colors.white),
+        )),
         const CircleAvatar(
           backgroundColor: Colors.white,
           radius: 27,
           child: CircleAvatar(
             backgroundColor: Colors.black,
             radius: 25,
-            child:Icon(CupertinoIcons.play_fill,color: Colors.white,),
+            child: Icon(
+              CupertinoIcons.play_fill,
+              color: Colors.white,
+            ),
           ),
         )
       ],

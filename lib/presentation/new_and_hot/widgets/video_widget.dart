@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:netflixclone/api/api.constants.dart';
 import 'package:netflixclone/core/colors/colors.dart';
+import 'package:netflixclone/model/new_and_hot_model.dart';
 
 class VideoWidget extends StatelessWidget {
-  const VideoWidget({super.key});
+  final NewAndHotModel newAndHotModel;
+  const VideoWidget({super.key, required this.newAndHotModel});
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Stack(
       children: [
-        Container(
+        SizedBox(
           width: double.infinity,
           height: 200,
           child: Image.network(
-            "https://image.tmdb.org/t/p/original/waLsi24ZpjBCeSX6oGm1vIz1wVS.jpg",
+            ApiConstants.imageurl + newAndHotModel.posterpath!,
             fit: BoxFit.cover,
           ),
         ),

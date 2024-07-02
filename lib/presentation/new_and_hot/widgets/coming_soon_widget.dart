@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:netflixclone/core/colors/colors.dart';
 import 'package:netflixclone/core/constants.dart';
-import 'package:netflixclone/presentation/home/widgets/custom_buttonWwiget.dart';
+import 'package:netflixclone/model/new_and_hot_model.dart';
+import 'package:netflixclone/presentation/home/widgets/custom_buttonwiget.dart';
 import 'package:netflixclone/presentation/new_and_hot/widgets/video_widget.dart';
 
 class ComingSoonWidget extends StatelessWidget {
-  const ComingSoonWidget({super.key});
+  final NewAndHotModel newAndHotModel;
+  const ComingSoonWidget({super.key, required this.newAndHotModel});
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -38,19 +40,25 @@ class ComingSoonWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const VideoWidget(),
-              const SizedBox(height: 8),
+              VideoWidget(
+                newAndHotModel: newAndHotModel,
+              ),
+              SizedBox(width: size.width - 50, height: 8),
               Row(
                 children: [
-                  const Text(
-                    "Tall Girl 2",
-                    style: TextStyle(
-                      fontSize: 35,
-                      fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Text(
+                      newAndHotModel.title ?? 'Notitle',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 20),
-                  Row(
+                  const Row(
                     children: [
                       CustomButtonWidget(
                         icon: Icons.notifications,
@@ -58,32 +66,32 @@ class ComingSoonWidget extends StatelessWidget {
                         iconsSize: 20,
                         textSize: 12,
                       ),
-                      const SizedBox(width: 10),
+                      SizedBox(width: 10),
                       CustomButtonWidget(
                         icon: Icons.info,
                         title: "Info",
                         iconsSize: 20,
                         textSize: 12,
                       ),
-                      const SizedBox(width: 10),
+                      SizedBox(width: 10),
                     ],
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 15,),
               const Text("Coming on Friday"),
-              const SizedBox(height: 10),
-              const Text(
-                "Tall Girl 2",
-                style: TextStyle(
+              const SizedBox(height: 25,),
+              Text(
+                newAndHotModel.title ?? 'No title',
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 10),
-              const Text(
-                "Landing the lead in the school musical is a dream come true for Jodi, until the pressure sends her confidence - and her relationship - into a tailspin.",
-                style: TextStyle(
+              height,
+              Text(
+                newAndHotModel.description ?? 'Nodescription',
+                style: const TextStyle(
                   color: Colors.grey,
                 ),
               ),

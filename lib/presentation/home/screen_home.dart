@@ -1,16 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:netflixclone/api/api.dart';
 import 'package:netflixclone/core/colors/colors.dart';
 import 'package:netflixclone/core/constants.dart';
+import 'package:netflixclone/model/download_model.dart';
 import 'package:netflixclone/presentation/home/widgets/background_card.dart';
-import 'package:netflixclone/presentation/home/widgets/number_card.dart';
-import 'package:netflixclone/presentation/widgets/main_title.dart';
-
+import 'package:netflixclone/presentation/home/widgets/number_title_card.dart';
+import 'package:netflixclone/presentation/widgets/main_title_card.dart';
 
 ValueNotifier<bool> scrollNotifier = ValueNotifier(true);
 
-class ScreenHome extends StatelessWidget {
+class ScreenHome extends StatefulWidget {
   const ScreenHome({super.key});
+
+  @override
+  State<ScreenHome> createState() => _ScreenHomeState();
+}
+
+class _ScreenHomeState extends State<ScreenHome> {
+  late Future<List<DownloadModel>> trendingImagelist;
+  late Future<List<DownloadModel>> lastYearMoviesList;
+  late Future<List<DownloadModel>> tenseDramas;
+  late Future<List<DownloadModel>> southIndianMovies;
+  late Future<List<DownloadModel>> topTvShows;
+
+  @override
+  void initState() {
+    super.initState();
+    trendingImagelist = Api().getTrendingMovies();
+    lastYearMoviesList = Api().getLastYearMovies();
+    tenseDramas = Api().getTenseDramas();
+    southIndianMovies = Api().getSouthIndianMovies();
+    topTvShows = Api().getTopTvShows();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,25 +53,107 @@ class ScreenHome extends StatelessWidget {
           child: Stack(
             children: [
               ListView(
-                children: const [
-                  BackgroundCard(),
-                  MainTitleCard(
-                    cardtitle: "Released in the past year",
+                children: [
+                  const BackgroundCard(),
+                  height,
+                  //  MainTitleCard(cardTitle: 'Released in the past year'),
+                  SizedBox(
+                    child: FutureBuilder(
+                        future: lastYearMoviesList,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return Center(
+                                child: Text(snapshot.error.toString()));
+                          } else if (snapshot.hasData) {
+                            return MainTitleCard(
+                                cardtitle: 'Released in the past year',
+                                snapshot: snapshot);
+                          } else {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                        }),
                   ),
                   height,
-                  MainTitleCard(
-                    cardtitle: "Trending Now",
+                  SizedBox(
+                    child: FutureBuilder(
+                        future: trendingImagelist,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return Center(
+                              child: Text(snapshot.error.toString()),
+                            );
+                          } else if (snapshot.hasData) {
+                            return MainTitleCard(
+                                cardtitle: 'Trending Now', snapshot: snapshot);
+                          } else {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                        }),
+                  ),
+
+                  height,
+                  SizedBox(
+                    child: FutureBuilder(
+                        future: topTvShows,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return Center(
+                              child: Text(snapshot.error.toString()),
+                            );
+                          } else if (snapshot.hasData) {
+                            return NumberTitleCard(snapshot: snapshot);
+                          } else {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                        }),
                   ),
                   height,
-                  NumberTitleCard(),
-                  height,
-                  MainTitleCard(
-                    cardtitle: "Tense Dramas",
+                  SizedBox(
+                    child: FutureBuilder(
+                        future: tenseDramas,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return Center(
+                              child: Text(snapshot.error.toString()),
+                            );
+                          } else if (snapshot.hasData) {
+                            return MainTitleCard(
+                                cardtitle: 'Tense Dramas', snapshot: snapshot);
+                          } else {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                        }),
                   ),
                   height,
-                  MainTitleCard(
-                    cardtitle: "South Indian Cinema",
+
+                  SizedBox(
+                    child: FutureBuilder(
+                        future: southIndianMovies,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return Center(
+                              child: Text(snapshot.error.toString()),
+                            );
+                          } else if (snapshot.hasData) {
+                            return MainTitleCard(
+                                cardtitle: 'South Indian cinemas',
+                                snapshot: snapshot);
+                          } else {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                        }),
                   ),
+
                   height,
                 ],
               ),
@@ -104,92 +208,5 @@ class ScreenHome extends StatelessWidget {
         );
       },
     ));
-  }
-}
-
-
-class NumberTitleCard extends StatelessWidget {
-  const NumberTitleCard({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const MainTitle(title: "Top 10 TV Shows in India Today"),
-        height,
-        LimitedBox(
-          maxHeight: 200,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: 10,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: NumberCard(
-                  index: index,
-                ),
-              );
-            },
-          ),
-        )
-      ],
-    );
-  }
-}
-
-
-class MainCard extends StatelessWidget {
-  const MainCard({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    const imageUrl =
-        "https://media.themoviedb.org/t/p/w300_and_h450_bestv2/ucpdBAvtLxWvQPG09Xd3TgGuxwE.jpg";
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10),
-      width: 130,
-      height: 250,
-      decoration: BoxDecoration(
-        borderRadius: radius10,
-        image: DecorationImage(
-          fit: BoxFit.cover,
-          image: NetworkImage(
-            imageUrl,
-           
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class MainTitleCard extends StatelessWidget {
-  const MainTitleCard({super.key, required this.cardtitle});
-  final String cardtitle;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        MainTitle(title: cardtitle),
-        height,
-        LimitedBox(
-          maxHeight: 200,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: List.generate(
-              10,
-              (index) => const MainCard(),
-            ),
-          ),
-        )
-      ],
-    );
   }
 }
